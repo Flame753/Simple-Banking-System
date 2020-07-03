@@ -20,3 +20,5 @@ if __name__ == "__main__":
     print(Bank().card_number)
     print(Bank().card_number)
     print(a.card_number, a.pin)
+
+    print()
