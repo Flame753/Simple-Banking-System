@@ -1,0 +1,18 @@
+type: code
+files:
+- name: task.py
+  visible: true
+  text: |-
+    create a variable x
+    with the value 8
+    x = 8
+    x = x * x
+    print(x) prints the x squared
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/6791
+status: Solved
+feedback:
+  message: <html>Correct solution<br/><br/>Continue on <a href="https://hyperskill.org/learn/step/6791">JetBrains
+    Academy</a></html>
+  time: Sat, 04 Jul 2020 15:49:53 UTC
+record: -1
