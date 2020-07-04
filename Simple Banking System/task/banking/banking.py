@@ -29,52 +29,61 @@ class Bank:
 
 
 class Menu:
+    page = "home"
+
     def __init__(self):
         self.menu = None
-        self.page = None
 
     def print_menu(self):
         for key, value in self.menu.items():
             print(f"{key}. {value}")
 
-    def page_switch(self, new_page):
-        self.page = new_page
+    @staticmethod
+    def page_switch(new_page):
+        Menu.page = new_page
 
     @staticmethod
-    def exit():
-        return True
+    def is_page(page):
+        """ Checks what is the current page"""
+        if Menu.page == page:
+            return True
+        return False
 
 
 class StartingMenu(Menu):
     def __init__(self):
         super().__init__()
         self.menu = {1: "Create an account", 2: "Log into account", 0: "Exit"}
-        self.page = "starting"
 
 
 class AccountMenu(Menu):
     def __init__(self):
         super().__init__()
         self.menu = {1: "Balance", 2: "Log out", 0: "Exit"}
-        self.page = "account"
+
+
+def get_action():
+    if Menu.is_page("home"):
+        StartingMenu().print_menu()
+    elif Menu.is_page("account"):
+        AccountMenu().print_menu()
+
+    action_input = input()
+    if action_input == 1:  # Creating an account or Check balance
+        if Menu.is_page("home"):
+            pass
+        elif Menu.is_page("account"):
+            pass
+    elif action_input == 2:  # Log into account or Log out
+        if Menu.is_page("home"):
+            pass
+        elif Menu.is_page("account"):
+            pass
+    elif action_input == 0:  # Exit
+        return True
 
 
 if __name__ == "__main__":
-    print(Menu().menu)
-    print(StartingMenu().menu)
-    a = Bank().accounts
-    print(a)
-
-
-
-
-    action = "s"
+    action = None
     while not action:
-        print_menu(starting_menu)
-        action = input()
-        if action == 1:
-            pass
-        elif action == 2:
-            pass
-
-        action = True
+        action = get_action()
