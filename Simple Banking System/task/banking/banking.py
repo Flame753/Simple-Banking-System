@@ -68,17 +68,23 @@ def get_action():
     elif Menu.is_page("account"):
         AccountMenu().print_menu()
 
-    action_input = input()
-    if action_input == 1:  # Creating an account or Check balance
-        if Menu.is_page("home"):
+    action_input = int(input())
+    print()
+    if action_input == 1:
+        if Menu.is_page("home"):  # Creating an account
+            account = Bank()
+            print(f"Your card number: \n{account.card_number}")
+            print(f"Your card PIN: \n{account.pin}")
+            print()
+        elif Menu.is_page("account"):  # Check balance
             pass
-        elif Menu.is_page("account"):
+    elif action_input == 2:
+        if Menu.is_page("home"):  # Log into account
             pass
-    elif action_input == 2:  # Log into account or Log out
-        if Menu.is_page("home"):
-            pass
-        elif Menu.is_page("account"):
-            pass
+        elif Menu.is_page("account"):  # Log out
+            print("You have successfully logged out!")
+            Menu.page_switch("home")
+
     elif action_input == 0:  # Exit
         return True
 
@@ -87,3 +93,4 @@ if __name__ == "__main__":
     action = None
     while not action:
         action = get_action()
+    print("Bye!")
