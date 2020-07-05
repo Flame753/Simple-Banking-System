@@ -7,25 +7,28 @@ class Bank:
     accounts = {}
 
     def __init__(self):
-        self.account_identifier = Bank.add_zeros(random.randint(0, int('9' * 9)), 9)
-        self.card_number = int(str(Bank.BIN) + self.account_identifier + str(Bank.checksum))
-        self.pin = Bank.add_zeros(random.randint(0, 9999), 4)
+        self.account_identifier = self.add_zeros(random.randint(0, int('9' * 9)), 9)
+        self.card_number = int(str(self.BIN) + self.account_identifier + str(self.checksum))
+        self.pin = self.add_zeros(random.randint(0, 9999), 4)
         self.user_name = "User" + self.account_identifier
         self.balance = 0
         self.add_to_data_base()
 
-    def add_to_data_base(self):
-        Bank.accounts.update({self.user_name: {'pin': self.pin,
-                                               'card number': self.card_number,
-                                               'balance': self.balance}})
-
     @staticmethod
     def add_zeros(num, length):
-        """ Adds any missing leading zeros"""
+        """ Adds any missing leading zeros. Returns: A string of numbers"""
         if len(str(num)) < length:
             missing_zero = "0" * (length - len(str(num)))
             return missing_zero + str(num)
         return str(num)
+
+    def add_to_data_base(self):
+        self.accounts.update({self.user_name: {'pin': self.pin,
+                                               'card number': self.card_number,
+                                               'balance': self.balance}})
+
+    def find_account(self, card_number, pin):
+        pass
 
 
 class Menu:
