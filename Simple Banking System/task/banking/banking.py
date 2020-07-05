@@ -78,8 +78,8 @@ class AccountMenu(Menu):
 def create_account(bank):
     account = Account()
     bank.append(account)
-    print(f"Your card number: \n{account.get_card_number}")
-    print(f"Your card PIN: \n{account.get_pin}")
+    print(f"Your card number: \n{account.get_card_number()}")
+    print(f"Your card PIN: \n{account.get_pin()}")
     print()
 
 
@@ -92,9 +92,10 @@ def load_menu():
 
 
 def main():
-    leave = True
+    leave = None
     baning_accounts = []
     menu = load_menu()
+
     while not leave:
         if menu.is_page_currently_on("Home"):
             menu.print_current_menu()
