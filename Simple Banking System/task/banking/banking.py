@@ -6,21 +6,13 @@ class Account:
     checksum = 5
 
     def __init__(self):
-        self.account_identifier = self.add_zeros(random.randint(0, int('9' * 9)), 9)
+        self.account_identifier = format(random.randint(0, int("9" * 9)), '010d')
         self.card_number = str(self.BIN) + self.account_identifier + str(self.checksum)
-        self.pin = self.add_zeros(random.randint(0, 9999), 4)
+        self.pin = format(random.randint(0, 9999), '04d')
         self.balance = 0
 
     def __repr__(self):
         return self.account_identifier
-
-    @staticmethod
-    def add_zeros(num, length):
-        """ Adds any missing leading zeros. Returns: A string of numbers"""
-        if len(str(num)) < length:
-            missing_zero = "0" * (length - len(str(num)))
-            return missing_zero + str(num)
-        return str(num)
 
     def get_card_number(self):
         return self.card_number
@@ -144,4 +136,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    #main()
