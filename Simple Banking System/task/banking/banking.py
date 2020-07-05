@@ -28,6 +28,9 @@ class Account:
     def get_pin(self):
         return self.pin
 
+    def get_balance(self):
+        return self.balance
+
 
 class Menu:
     pages = {}
@@ -81,6 +84,7 @@ def create_account(bank):
     print(f"Your card number: \n{account.get_card_number()}")
     print(f"Your card PIN: \n{account.get_pin()}")
     print()
+    return account
 
 
 def load_menu():
@@ -91,28 +95,48 @@ def load_menu():
     return menu
 
 
+def check_account_exist(banking_accounts, card_number, pin):
+    for account in banking_accounts:
+        if card_number == account.get_card_number() and pin == account.get_pin():
+            return account
+
+
 def main():
     leave = None
-    baning_accounts = []
+    banking_accounts = []
+    account_logged_in = None
     menu = load_menu()
-
     while not leave:
         if menu.is_page_currently_on("Home"):
             menu.print_current_menu()
             action_input = int(input())
+            print()
             if action_input == 1:  # Creating an account
-                create_account(baning_accounts)
+                create_account(banking_accounts)
             elif action_input == 2:  # Log into account
-                pass
+                exist = check_account_exist(banking_accounts,
+                                            input("Enter your card number: "),
+                                            input("Enter your PIN: "))
+                print()
+                if exist:
+                    print("You have successfully logged in!")
+                    print()
+                    account_logged_in = exist
+                    menu.set_current_page("Account")
+                else:
+                    print("Wrong card number or PIN!")
+                    print()
             elif action_input == 0:  # Exit
                 leave = True
         elif menu.is_page_currently_on("Account"):
             menu.print_current_menu()
             action_input = int(input())
+            print()
             if action_input == 1:  # Check balance
-                pass
+                print(f"Balance: {account_logged_in.get_balance()}")
             elif action_input == 2:  # Log out
                 print("You have successfully logged out!")
+                print()
                 menu.set_current_page("Home")
             elif action_input == 0:  # Exit
                 leave = True
