@@ -1,0 +1,29 @@
+type: code
+files:
+- name: task.py
+  visible: true
+  text: |-
+    class Stack():
+
+        def __init__(self):
+            pass
+
+        def push(self, el):
+            pass
+
+        def pop(self):
+            pass
+
+        def peek(self):
+            pass
+
+        def is_empty(self):
+            pass
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/8924
+status: Solved
+feedback:
+  message: <html>Correct solution<br/><br/>Continue on <a href="https://hyperskill.org/learn/step/8924">JetBrains
+    Academy</a></html>
+  time: Sun, 05 Jul 2020 16:28:49 UTC
+record: -1
