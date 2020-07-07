@@ -85,7 +85,7 @@ class Bank:
         print('You have successfully logged out!')
 
     def show_balance(self):
-        if self.active_card is None:
+        if self.active_card == None:
             return
         balance = self.active_card.balance
         print(f"Balance: {balance}")
@@ -106,6 +106,4 @@ class Bank:
 
 if __name__ == "__main__":
     m = Bank('400000')
-    m.luhn_algorithm(4000006744223602)
     m.run()
-
