@@ -172,6 +172,13 @@ files:
     if __name__ == '__main__':
         BankingSystem('banking.banking').run_tests()
   learner_created: false
+- name: banking/banking.py
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/109/stages/592/implement
-status: Unchecked
+status: Solved
+feedback:
+  message: Congratulations! Continue on <a href="https://hyperskill.org/projects/109/stages/592/implement">JetBrains
+    Academy</a>
+  time: Tue, 07 Jul 2020 20:19:21 UTC
 record: -1
