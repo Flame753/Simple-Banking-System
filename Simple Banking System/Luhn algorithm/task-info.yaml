@@ -172,6 +172,104 @@ files:
     if __name__ == '__main__':
         BankingSystem('banking.banking').run_tests()
   learner_created: false
+- name: banking/banking.py
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/109/stages/592/implement
-status: Unchecked
+status: Failed
+feedback:
+  message: |-
+    Wrong answer in test #5
+
+    The card number '4000005250440601' doesn't pass luhn algorithm!
+
+    Please find below the output of your program during this failed test.
+    Note that the '>' character indicates the beginning of the input line.
+
+    ---
+
+    1. Create an account
+    2. Log into account
+    0. Exit
+
+    > 1
+    Your card has been created
+    Your card number:
+    4000001987453495
+    Your card PIN:
+    1226
+    1. Create an account
+    2. Log into account
+    0. Exit
+
+    > 1
+    Your card has been created
+    Your card number:
+    40000052504406010
+    Your card PIN:
+    7952
+    1. Create an account
+    2. Log into account
+    0. Exit
+
+    > 1
+    Your card has been created
+    Your card number:
+    4000004753106933
+    Your card PIN:
+    0131
+    1. Create an account
+    2. Log into account
+    0. Exit
+
+    > 1
+    Your card has been created
+    Your card number:
+    4000002078688122
+    Your card PIN:
+    9969
+    1. Create an account
+    2. Log into account
+    0. Exit
+
+    > 1
+    Your card has been created
+    Your card number:
+    4000008546008314
+    Your card PIN:
+    1396
+    1. Create an account
+    2. Log into account
+    0. Exit
+
+    > 1
+    Your card has been created
+    Your card number:
+    4000009368931609
+    Your card PIN:
+    6011
+    1. Create an account
+    2. Log into account
+    0. Exit
+
+    > 1
+    Your card has been created
+    Your card number:
+    4000005211744421
+    Your card PIN:
+    1283
+    1. Create an account
+    2. Log into account
+    0. Exit
+
+    > 1
+    Your card has been created
+    Your card number:
+    40000096374494910
+    Your card PIN:
+    7323
+    1. Create an account
+    2. Log into account
+    0. Exit
+  time: Tue, 07 Jul 2020 19:40:26 UTC
 record: -1
