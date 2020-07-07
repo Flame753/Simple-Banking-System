@@ -94,11 +94,11 @@ class Bank:
     def luhn_algorithm(card):
         card_num = [int(x) for x in str(card)]
         card_num.pop()  # Drop the last digit
-        for position in range(1, len(card_num)+1):
-            if position % 2 == 1:
-                card_num[position-1] = card_num[position-1] * 2  # Multiply odd position by 2
-                if card_num[position-1] > 9:
-                    card_num[position - 1] = card_num[position-1] - 9  # Subtract 9 to numbers over 9
+        for position in range(len(card_num)):
+            if (position + 1) % 2 == 1:
+                card_num[position] = card_num[position] * 2  # Multiply odd position by 2
+                if card_num[position] > 9:
+                    card_num[position] = card_num[position] - 9  # Subtract 9 to numbers over 9
         total = sum(card_num)  # Add all numbers
         check_sum = 10 - (total % 10)
         return check_sum
