@@ -33,9 +33,8 @@ class Bank:
         while True:
             account = format(random.randint(0, int("9" * 9)), '09d')
             card = f'{self.bank_id}{account}0'
-            card_sum = self.luhn_algorithm(card)
-            checksum = 10 - (card_sum % 10)
-            card = f'{self.bank_id}{account}{checksum}'
+            check_sum = self.luhn_algorithm(card)
+            card = f'{self.bank_id}{account}{check_sum}'
             try:
                 has = self.cards[card]
             except KeyError:
@@ -61,7 +60,7 @@ class Bank:
     def check_card(self, card, pin) -> bool:
         try:
             c = self.cards[card]
-            if c.pin == pin:
+            if c.pin == pin and self.luhn_algorithm(card) == int(str(card)[-1]):
                 return True
         except KeyError:
             return False
@@ -86,7 +85,7 @@ class Bank:
         print('You have successfully logged out!')
 
     def show_balance(self):
-        if self.active_card == None:
+        if self.active_card is None:
             return
         balance = self.active_card.balance
         print(f"Balance: {balance}")
@@ -101,9 +100,12 @@ class Bank:
                 if card_num[position-1] > 9:
                     card_num[position - 1] = card_num[position-1] - 9  # Subtract 9 to numbers over 9
         total = sum(card_num)  # Add all numbers
-        return total
+        check_sum = 10 - (total % 10)
+        return check_sum
 
 
 if __name__ == "__main__":
     m = Bank('400000')
+    m.luhn_algorithm(4000006744223602)
     m.run()
+
