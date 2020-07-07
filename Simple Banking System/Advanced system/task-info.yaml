@@ -164,7 +164,8 @@ files:
                         if correct_column[0] in real_column and correct_column[1] in real_column:
                             break
                     else:
-                        return CheckResult.wrong('Your table should have columns described in the stage instructions.')
+                        return CheckResult.wrong('Your table should have columns described in the stage instructions.\n'
+                                                 'Make sure you use INTEGER type not INT.')
         except Exception:
             return CheckResult.wrong('Can\'t connect to the database!')
 
@@ -182,7 +183,8 @@ files:
                     if number in row:
                         is_found = True
                 if not is_found:
-                    return CheckResult.wrong('Your database doesn’t save newly created cards.')
+                    return CheckResult.wrong('Your database doesn’t save newly created cards.\n'
+                                             'Make sure you commit your DB changes right after saving a new card in the database!')
         return CheckResult.correct()
 
 
