@@ -27,8 +27,7 @@ class Bank:
         check_sum = self.luhn_algorithm(card)
         card = f'{self.bank_id}{account}{check_sum}'  # Set card number
         pin = format(random.randint(0, 9999), '04d')
-        cur.execute('INSERT INTO card (id, number, pin)VALUES (?, ?, ?)', (account, card, pin))
-        conn.commit()
+        insert_card(account, card, pin)
         print('Your card has been created')
         print('Your card number:')
         print(card)
@@ -39,18 +38,20 @@ class Bank:
         card = input('Enter your card number:')
         pin = input('Enter your PIN:')
         if self.check_card(card, pin):
-            self.active_card = self.cards[card]
+            self.active_card = retrieve_card_info(card, pin)
             print('You have successfully logged in!')
             self.run_logged()
         else:
             print('Wrong card number or PIN!')
 
-    def check_card(self, card, pin) -> bool:
+    def check_card(self, user_card, user_pin) -> bool:
         try:
-            c = self.cards[card]
-            if c.pin == pin and self.luhn_algorithm(card) == int(str(card)[-1]):
+            card_info = retrieve_card_info(user_card, user_pin)
+            number = card_info['number']
+            pin = card_info['pin']
+            if pin == user_pin and self.luhn_algorithm(user_card) == int(number[-1]):
                 return True
-        except KeyError:
+        except TypeError:
             return False
         return False
 
@@ -77,7 +78,7 @@ class Bank:
     def show_balance(self):
         if not self.active_card:  # Card doesn't exist
             return
-        balance = self.active_card.balance
+        balance = self.active_card["balance"]
         print(f"Balance: {balance}")
 
     @staticmethod
@@ -92,6 +93,21 @@ class Bank:
         total = sum(card_num)  # Add all numbers
         check_sum = 10 - (total % 10)
         return check_sum
+
+
+def insert_card(account, card, pin):
+    cur.execute('INSERT INTO card (id, number, pin)VALUES (?, ?, ?)', (account, card, pin))
+    conn.commit()
+
+
+def retrieve_card_info(card_number, pin):
+    card_info = ('id', 'number', 'pin', 'balance')
+    cur.execute('SELECT * FROM card WHERE number = ? AND pin = ?', (card_number, pin))
+    card_values = cur.fetchone()
+    card_dict = dict()
+    for position, name in enumerate(card_info):
+        card_dict[name] = card_values[position]
+    return card_dict
 
 
 if __name__ == "__main__":
