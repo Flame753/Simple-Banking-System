@@ -123,11 +123,8 @@ if __name__ == "__main__":
                 'pin VARCHAR(4), '
                 'balance INTEGER DEFAULT 0);')
     conn.commit()
-
     m = Bank('400000')
-    #m.run()
-    print(m.luhn_algorithm(4000000445395711))
-
+    m.run()
     conn.commit()
     # Close connection
     conn.close()
