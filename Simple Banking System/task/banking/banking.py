@@ -106,5 +106,6 @@ class Bank:
 
 
 if __name__ == "__main__":
+    conn = sqlite3.connect('example.s3db')
     m = Bank('400000')
     m.run()
