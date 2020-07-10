@@ -35,10 +35,10 @@ class Bank:
             account = format(random.randint(0, int("9" * 9)), '09d')
             card = f'{self.bank_id}{account}0'
             check_sum = self.luhn_algorithm(card)
-            card = f'{self.bank_id}{account}{check_sum}'
+            card = f'{self.bank_id}{account}{check_sum}'  # Set card number
             try:
-                has = self.cards[card]
-            except KeyError:
+                self.cards[card]  # Testing if card exist
+            except KeyError:  # Card not exist then, creates card
                 pin = format(random.randint(0, 9999), '04d')
                 self.cards[card] = Card(card, pin, account, 0)
                 break
@@ -86,7 +86,7 @@ class Bank:
         print('You have successfully logged out!')
 
     def show_balance(self):
-        if self.active_card == None:
+        if not self.active_card:  # Card doesn't exist
             return
         balance = self.active_card.balance
         print(f"Balance: {balance}")
