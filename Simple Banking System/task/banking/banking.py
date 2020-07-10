@@ -106,6 +106,16 @@ class Bank:
 
 
 if __name__ == "__main__":
-    conn = sqlite3.connect('example.s3db')
+    # define connection and cursor
+    conn = sqlite3.connect('card.s3db')
+    cur = conn.cursor()
+    # Create a Table
+    cur.execute('CREATE TABLE IF NOT EXISTS card ('
+                'id INTEGER, '
+                'number VARCHAR(16), '
+                'pin VARCHAR(4), '
+                'balance INTEGER DEFAULT 0);')
+    # Commit our commit
+    conn.commit()
     m = Bank('400000')
     m.run()
