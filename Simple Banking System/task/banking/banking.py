@@ -92,6 +92,8 @@ class Bank:
                     card_num[position] = card_num[position] - 9  # Subtract 9 to numbers over 9
         total = sum(card_num)  # Add all numbers
         check_sum = 10 - (total % 10)
+        if check_sum == 10:
+            check_sum = 0
         return check_sum
 
 
@@ -123,9 +125,8 @@ if __name__ == "__main__":
     conn.commit()
 
     m = Bank('400000')
-    m.run()
-    cur.execute('SELECT * FROM card')
-    print(cur.fetchall())
+    #m.run()
+    print(m.luhn_algorithm(4000000445395711))
 
     conn.commit()
     # Close connection
