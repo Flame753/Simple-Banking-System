@@ -246,7 +246,7 @@ files:
 - name: banking/banking.py
   visible: true
   learner_created: true
-- name: banking/example.s3db
+- name: banking/card.s3db
   visible: true
   learner_created: true
 feedback_link: https://hyperskill.org/projects/109/stages/593/implement
