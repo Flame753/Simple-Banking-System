@@ -3,19 +3,10 @@ import sys
 import sqlite3
 
 
-class Card:
-    def __init__(self, card, pin, account, balance):
-        self.card = card
-        self.pin = pin
-        self.account = account
-        self.balance = balance
-
-
 class Bank:
     def __init__(self, bank_id):
         self.bank_id = bank_id
-        self.cards: dict = dict()
-        self.active_card: Card = None
+        self.active_card = None
 
     def run(self):
         while True:
@@ -31,17 +22,13 @@ class Bank:
                 break
 
     def create_account(self):
-        while True:
-            account = format(random.randint(0, int("9" * 9)), '09d')
-            card = f'{self.bank_id}{account}0'
-            check_sum = self.luhn_algorithm(card)
-            card = f'{self.bank_id}{account}{check_sum}'  # Set card number
-            try:
-                self.cards[card]  # Testing if card exist
-            except KeyError:  # Card not exist then, creates card
-                pin = format(random.randint(0, 9999), '04d')
-                self.cards[card] = Card(card, pin, account, 0)
-                break
+        account = format(random.randint(0, int("9" * 9)), '09d')
+        card = f'{self.bank_id}{account}0'
+        check_sum = self.luhn_algorithm(card)
+        card = f'{self.bank_id}{account}{check_sum}'  # Set card number
+        pin = format(random.randint(0, 9999), '04d')
+        cur.execute('INSERT INTO card (id, number, pin)VALUES (?, ?, ?)', (account, card, pin))
+        conn.commit()
         print('Your card has been created')
         print('Your card number:')
         print(card)
@@ -79,6 +66,8 @@ class Bank:
                 self.logout()
                 break
             elif action == '0':
+                conn.commit()
+                cur.close()
                 sys.exit()
 
     def logout(self):
@@ -115,7 +104,13 @@ if __name__ == "__main__":
                 'number VARCHAR(16), '
                 'pin VARCHAR(4), '
                 'balance INTEGER DEFAULT 0);')
-    # Commit our commit
     conn.commit()
+
     m = Bank('400000')
     m.run()
+    cur.execute('SELECT * FROM card')
+    print(cur.fetchall())
+
+    conn.commit()
+    # Close connection
+    conn.close()
