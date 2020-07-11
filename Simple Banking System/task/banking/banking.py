@@ -22,7 +22,7 @@ class Bank:
             elif action == '0':
                 self.data_base.close_file()
                 break
-            self.data_base.dis_all()  # Will need to be removed
+            self.data_base.dis_all()  # Test, will need to be removed
 
     def create_account(self):
         account = format(random.randint(0, int("9" * 9)), '09d')
@@ -41,7 +41,7 @@ class Bank:
         card = input('Enter your card number:')
         pin = input('Enter your PIN:')
         if self.check_card(card, pin):
-            self.active_card = self.data_base.retrieve_card_info(card, pin)
+            self.update_active_card(card, pin)
             print('You have successfully logged in!')
             self.run_logged()
         else:
@@ -70,7 +70,7 @@ class Bank:
             if action == '1':
                 self.show_balance()
             elif action == '2':
-                pass
+                self.add_income()
             elif action == '3':
                 pass
             elif action == '4':
@@ -82,18 +82,18 @@ class Bank:
             elif action == '0':
                 self.data_base.close_file()
                 sys.exit()
-            self.data_base.dis_all()  # Will need to be removed
+            self.data_base.dis_all()  # Test, will need to be removed
 
     def logout(self):
-        self.active_card = None
+        self.update_active_card()
         print('You have successfully logged out!')
 
     def close_account(self):
         id = self.active_card['id']
         card_number = self.active_card['number']
         pin = self.active_card['pin']
-        self.active_card = None
         self.data_base.delete_account(id, card_number, pin)
+        self.update_active_card()
         print("The account has been closed!")
 
     def show_balance(self):
@@ -101,6 +101,21 @@ class Bank:
             return
         balance = self.active_card["balance"]
         print(f"Balance: {balance}")
+
+    def add_income(self):
+        amount = int(input('Enter income: '))
+        id = self.active_card['id']
+        card_number = self.active_card['number']
+        pin = self.active_card['pin']
+        self.data_base.add_to_balance(id, amount)
+        self.update_active_card(card_number, pin)
+        print('Income was added!')
+
+    def update_active_card(self, card=None, pin=None):
+        if card is None or pin is None:
+            self.active_card = None
+        else:
+            self.active_card = self.data_base.retrieve_card_info(card, pin)
 
     @staticmethod
     def luhn_algorithm(card):
@@ -148,8 +163,9 @@ class DataBase:
         self.conn.commit()
         self.cur.close()
 
-    def add_income(self):
-        pass
+    def add_to_balance(self, id, amount):
+        self.cur.execute('UPDATE card SET balance = balance + ? WHERE id = ?;', (amount, id))
+        self.conn.commit()
 
     def do_transfer(self):
         pass
