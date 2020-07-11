@@ -22,6 +22,7 @@ class Bank:
             elif action == '0':
                 self.data_base.close_file()
                 break
+            self.data_base.dis_all()  # Will need to be removed
 
     def create_account(self):
         account = format(random.randint(0, int("9" * 9)), '09d')
@@ -73,17 +74,27 @@ class Bank:
             elif action == '3':
                 pass
             elif action == '4':
-                pass
+                self.close_account()
+                break
             elif action == '5':
                 self.logout()
                 break
             elif action == '0':
                 self.data_base.close_file()
                 sys.exit()
+            self.data_base.dis_all()  # Will need to be removed
 
     def logout(self):
         self.active_card = None
         print('You have successfully logged out!')
+
+    def close_account(self):
+        id = self.active_card['id']
+        card_number = self.active_card['number']
+        pin = self.active_card['pin']
+        self.active_card = None
+        self.data_base.delete_account(id, card_number, pin)
+        print("The account has been closed!")
 
     def show_balance(self):
         if not self.active_card:  # Card doesn't exist
@@ -121,12 +132,12 @@ class DataBase:
         self.conn.commit()
 
     def insert_card(self, account, card, pin):
-        self.cur.execute('INSERT INTO card (id, number, pin)VALUES (?, ?, ?)', (account, card, pin))
+        self.cur.execute('INSERT INTO card (id, number, pin)VALUES (?, ?, ?);', (account, card, pin))
         self.conn.commit()
 
     def retrieve_card_info(self, card_number, pin):
         card_info = ('id', 'number', 'pin', 'balance')
-        self.cur.execute('SELECT * FROM card WHERE number = ? AND pin = ?', (card_number, pin))
+        self.cur.execute('SELECT * FROM card WHERE number = ? AND pin = ?;', (card_number, pin))
         card_values = self.cur.fetchone()
         card_dict = dict()
         for position, name in enumerate(card_info):
@@ -136,6 +147,20 @@ class DataBase:
     def close_file(self):
         self.conn.commit()
         self.cur.close()
+
+    def add_income(self):
+        pass
+
+    def do_transfer(self):
+        pass
+
+    def delete_account(self, id, card_number, pin):
+        self.cur.execute('DELETE FROM card WHERE id = ? AND number = ? AND pin = ?;', (id, card_number, pin))
+        self.conn.commit()
+
+    def dis_all(self):  # For Testing
+        self.cur.execute('SELECT * FROM card;')
+        print(self.cur.fetchall())
 
 
 if __name__ == "__main__":
