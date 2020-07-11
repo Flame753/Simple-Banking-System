@@ -164,7 +164,7 @@ class DataBase:
 
     def retrieve_card_info(self, card_number=None, pin=None, id=None):
         card_info = ('id', 'number', 'pin', 'balance')
-        self.cur.execute('SELECT * FROM card WHERE number = ? AND pin = ? OR id = ?;', (card_number, pin, id))
+        self.cur.execute('SELECT * FROM card WHERE (number = ? AND pin = ?) OR id = ?;', (card_number, pin, id))
         card_values = self.cur.fetchone()
         card_dict = dict()
         for position, name in enumerate(card_info):
