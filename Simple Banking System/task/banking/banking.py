@@ -59,13 +59,22 @@ class Bank:
 
     def run_logged(self):
         while True:
-            print('1. Balance')
-            print('2. Log out')
-            print('0. Exit   ')
+            print('1. Balance      ')
+            print('2. Add income   ')
+            print('3. Do transfer  ')
+            print('4. Close account')
+            print('5. Log out      ')
+            print('0. Exit         ')
             action = input()
             if action == '1':
                 self.show_balance()
             elif action == '2':
+                pass
+            elif action == '3':
+                pass
+            elif action == '4':
+                pass
+            elif action == '5':
                 self.logout()
                 break
             elif action == '0':
