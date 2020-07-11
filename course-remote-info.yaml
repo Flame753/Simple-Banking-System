@@ -93,8 +93,14 @@ topics:
     theory_id: 7409
   - title: Basic SELECT statement
     theory_id: 7392
+  - title: The NULL value
+    theory_id: 7907
   - title: SELECT FROM statement
     theory_id: 8611
+  - title: SELECT FROM WHERE statement
+    theory_id: 8619
+  - title: Basic INSERT statement
+    theory_id: 9059
   - title: Basic UPDATE statement
     theory_id: 9067
   - title: Basic CREATE statement

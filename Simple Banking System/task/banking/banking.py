@@ -119,8 +119,8 @@ if __name__ == "__main__":
     # Create a Table
     cur.execute('CREATE TABLE IF NOT EXISTS card ('
                 'id INTEGER, '
-                'number VARCHAR(16), '
-                'pin VARCHAR(4), '
+                'number TEXT, '
+                'pin TEXT, '
                 'balance INTEGER DEFAULT 0);')
     conn.commit()
     m = Bank('400000')
