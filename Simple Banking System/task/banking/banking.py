@@ -47,12 +47,13 @@ class Bank:
         else:
             print('Wrong card number or PIN!')
 
-    def check_card(self, user_card, user_pin) -> bool:
+    def check_card(self, user_card=None, user_pin=None, user_id=None) -> bool:
         try:
-            card_info = self.data_base.retrieve_card_info(user_card, user_pin)
+            card_info = self.data_base.retrieve_card_info(user_card, user_pin, user_id)
             number = card_info['number']
             pin = card_info['pin']
-            if pin == user_pin and self.luhn_algorithm(user_card) == int(number[-1]):
+            id = card_info['id']
+            if pin == user_pin and self.luhn_algorithm(user_card) == int(number[-1]) or user_id == id:
                 return True
         except TypeError:
             return False
@@ -72,7 +73,7 @@ class Bank:
             elif action == '2':
                 self.add_income()
             elif action == '3':
-                pass
+                self.do_transfer()
             elif action == '4':
                 self.close_account()
                 break
@@ -110,6 +111,17 @@ class Bank:
         self.data_base.add_to_balance(id, amount)
         self.update_active_card(card_number, pin)
         print('Income was added!')
+
+    def do_transfer(self):
+        print('Transfer')
+        card_number = str(input("Enter card number: "))
+        print(self.check_card(user_id=card_number[6:15]), card_number[6:15])
+        if self.luhn_algorithm(card_number) != int(card_number[-1]):
+            print('Probably you made mistake in the card number. Please try again!')
+        elif not self.check_card(user_id=card_number[6:15]):
+            print('Such a card does not exits.')
+        else:
+            print("Test Spot")
 
     def update_active_card(self, card=None, pin=None):
         if card is None or pin is None:
@@ -150,9 +162,9 @@ class DataBase:
         self.cur.execute('INSERT INTO card (id, number, pin)VALUES (?, ?, ?);', (account, card, pin))
         self.conn.commit()
 
-    def retrieve_card_info(self, card_number, pin):
+    def retrieve_card_info(self, card_number=None, pin=None, id=None):
         card_info = ('id', 'number', 'pin', 'balance')
-        self.cur.execute('SELECT * FROM card WHERE number = ? AND pin = ?;', (card_number, pin))
+        self.cur.execute('SELECT * FROM card WHERE number = ? AND pin = ? OR id = ?;', (card_number, pin, id))
         card_values = self.cur.fetchone()
         card_dict = dict()
         for position, name in enumerate(card_info):
@@ -163,12 +175,9 @@ class DataBase:
         self.conn.commit()
         self.cur.close()
 
-    def add_to_balance(self, id, amount):
+    def add_to_balance(self, id, amount=0):
         self.cur.execute('UPDATE card SET balance = balance + ? WHERE id = ?;', (amount, id))
         self.conn.commit()
-
-    def do_transfer(self):
-        pass
 
     def delete_account(self, id, card_number, pin):
         self.cur.execute('DELETE FROM card WHERE id = ? AND number = ? AND pin = ?;', (id, card_number, pin))
