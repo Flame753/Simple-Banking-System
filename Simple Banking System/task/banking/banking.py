@@ -67,8 +67,7 @@ class Bank:
                 self.logout()
                 break
             elif action == '0':
-                conn.commit()
-                cur.close()
+                close_file()
                 sys.exit()
 
     def logout(self):
@@ -112,6 +111,11 @@ def retrieve_card_info(card_number, pin):
     return card_dict
 
 
+def close_file():
+    conn.commit()
+    cur.close()
+
+
 if __name__ == "__main__":
     # define connection and cursor
     conn = sqlite3.connect('card.s3db')
@@ -125,6 +129,4 @@ if __name__ == "__main__":
     conn.commit()
     m = Bank('400000')
     m.run()
-    conn.commit()
-    # Close connection
-    conn.close()
+    close_file()
