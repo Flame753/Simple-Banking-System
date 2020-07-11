@@ -2,12 +2,17 @@ from hstest.exceptions import WrongAnswerException
 from hstest.test_case import CheckResult
 from hstest.stage_test import StageTest
 from hstest.test_case import TestCase
+from shutil import copy2
+import os
+import sqlite3
 import random
 import re
 
 card_number = ''
 pin = ''
 are_all_inputs_read = False
+db_file_name = 'card.s3db'
+temp_db_file_name = 'temp.s3db'
 
 
 def get_credentials(output: str):
@@ -119,16 +124,77 @@ def test_luhn_algorithm(output: str, value_to_return):
     return '0'
 
 
+def check_db(output: str, value_to_return):
+    if not os.path.exists(db_file_name):
+        return CheckResult.wrong('Can\'t find db file named \'{}\''.format(db_file_name))
+    try:
+        copy2(db_file_name, temp_db_file_name)
+    except Exception:
+        return CheckResult.wrong('Can\'t copy database file!')
+
+    try:
+        with sqlite3.connect(db_file_name) as db:
+            response = db.execute(
+                'SELECT name FROM sqlite_master WHERE type = \'table\' AND name NOT LIKE \'sqlite_%\';')
+            for _ in response.fetchall():
+                if 'card' in _:
+                    break
+            else:
+                return CheckResult.wrong('Your database doesn\'t have a table named \'card\'')
+    except Exception as exp:
+        return CheckResult.wrong('Can\'t connect to the database!')
+
+    correct_columns = (('ID', 'INTEGER'), ('NUMBER', 'TEXT'), ('PIN', 'TEXT'), ('BALANCE', 'INTEGER'))
+
+    try:
+        with sqlite3.connect(db_file_name) as db:
+            response = db.execute('PRAGMA table_info(card);')
+            real_columns = response.fetchall()
+            for correct_column in correct_columns:
+                for real_column in real_columns:
+                    real_column = [str(element).upper() for element in real_column]
+                    if correct_column[0] in real_column and correct_column[1] in real_column:
+                        break
+                else:
+                    return CheckResult.wrong('Your table should have columns described in the stage instructions.')
+    except Exception:
+        return CheckResult.wrong('Can\'t connect to the database!')
+
+    return CheckResult.correct()
+
+
+def check_db_rows(output, attach):
+    numbers = re.findall(r'400000\d{10}', output, re.MULTILINE)
+
+    with sqlite3.connect(db_file_name) as db:
+        rows = db.execute('SELECT * FROM card').fetchall()
+        for number in numbers:
+            for row in rows:
+                if number in row:
+                    break
+            else:
+                return CheckResult.wrong('Your database doesn’t save newly created cards.')
+    return CheckResult.correct()
+
+
 class BankingSystem(StageTest):
 
     def generate(self):
         return [
+            TestCase(
+                stdin='0',
+                check_function=check_db,
+            ),
             TestCase(
                 stdin=[
                     '1',
                     lambda output: test_card_generation(output, '1'),
                     lambda output: test_difference_between_generations(output, '0')
                 ]),
+            TestCase(
+                stdin='1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n0',
+                check_function=check_db_rows
+            ),
             TestCase(
                 stdin=[
                     '1',
@@ -162,6 +228,11 @@ class BankingSystem(StageTest):
             return CheckResult.correct()
         else:
             return CheckResult.wrong('You didn\'t read all inputs!')
+
+    def after_all_tests(self):
+        if os.path.exists('temp.s3db'):
+            copy2('temp.s3db', 'card.s3db')
+            os.remove('temp.s3db')
 
 
 if __name__ == '__main__':
