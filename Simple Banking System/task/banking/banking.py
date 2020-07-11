@@ -7,6 +7,7 @@ class Bank:
     def __init__(self, bank_id):
         self.bank_id = bank_id
         self.active_card = None
+        self.data_base = DataBase()
 
     def run(self):
         while True:
@@ -19,6 +20,7 @@ class Bank:
             elif action == '2':
                 self.login()
             elif action == '0':
+                self.data_base.close_file()
                 break
 
     def create_account(self):
@@ -27,7 +29,7 @@ class Bank:
         check_sum = self.luhn_algorithm(card)
         card = f'{self.bank_id}{account}{check_sum}'  # Set card number
         pin = format(random.randint(0, 9999), '04d')
-        insert_card(account, card, pin)
+        self.data_base.insert_card(account, card, pin)
         print('Your card has been created')
         print('Your card number:')
         print(card)
@@ -38,7 +40,7 @@ class Bank:
         card = input('Enter your card number:')
         pin = input('Enter your PIN:')
         if self.check_card(card, pin):
-            self.active_card = retrieve_card_info(card, pin)
+            self.active_card = self.data_base.retrieve_card_info(card, pin)
             print('You have successfully logged in!')
             self.run_logged()
         else:
@@ -46,7 +48,7 @@ class Bank:
 
     def check_card(self, user_card, user_pin) -> bool:
         try:
-            card_info = retrieve_card_info(user_card, user_pin)
+            card_info = self.data_base.retrieve_card_info(user_card, user_pin)
             number = card_info['number']
             pin = card_info['pin']
             if pin == user_pin and self.luhn_algorithm(user_card) == int(number[-1]):
@@ -67,7 +69,7 @@ class Bank:
                 self.logout()
                 break
             elif action == '0':
-                close_file()
+                self.data_base.close_file()
                 sys.exit()
 
     def logout(self):
@@ -96,37 +98,37 @@ class Bank:
         return check_sum
 
 
-def insert_card(account, card, pin):
-    cur.execute('INSERT INTO card (id, number, pin)VALUES (?, ?, ?)', (account, card, pin))
-    conn.commit()
+class DataBase:
+    def __init__(self):
+        # define connection and cursor
+        self.conn = sqlite3.connect('card.s3db')
+        self.cur = self.conn.cursor()
+        # Create a Table
+        self.cur.execute('CREATE TABLE IF NOT EXISTS card ('
+                         'id INTEGER, '
+                         'number TEXT, '
+                         'pin TEXT, '
+                         'balance INTEGER DEFAULT 0);')
+        self.conn.commit()
 
+    def insert_card(self, account, card, pin):
+        self.cur.execute('INSERT INTO card (id, number, pin)VALUES (?, ?, ?)', (account, card, pin))
+        self.conn.commit()
 
-def retrieve_card_info(card_number, pin):
-    card_info = ('id', 'number', 'pin', 'balance')
-    cur.execute('SELECT * FROM card WHERE number = ? AND pin = ?', (card_number, pin))
-    card_values = cur.fetchone()
-    card_dict = dict()
-    for position, name in enumerate(card_info):
-        card_dict[name] = card_values[position]
-    return card_dict
+    def retrieve_card_info(self, card_number, pin):
+        card_info = ('id', 'number', 'pin', 'balance')
+        self.cur.execute('SELECT * FROM card WHERE number = ? AND pin = ?', (card_number, pin))
+        card_values = self.cur.fetchone()
+        card_dict = dict()
+        for position, name in enumerate(card_info):
+            card_dict[name] = card_values[position]
+        return card_dict
 
-
-def close_file():
-    conn.commit()
-    cur.close()
+    def close_file(self):
+        self.conn.commit()
+        self.cur.close()
 
 
 if __name__ == "__main__":
-    # define connection and cursor
-    conn = sqlite3.connect('card.s3db')
-    cur = conn.cursor()
-    # Create a Table
-    cur.execute('CREATE TABLE IF NOT EXISTS card ('
-                'id INTEGER, '
-                'number TEXT, '
-                'pin TEXT, '
-                'balance INTEGER DEFAULT 0);')
-    conn.commit()
     m = Bank('400000')
     m.run()
-    close_file()
