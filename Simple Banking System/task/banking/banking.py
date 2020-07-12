@@ -110,12 +110,15 @@ class Bank:
     def do_transfer(self):
         print('Transfer')
         card_number = str(input("Enter card number: "))
-        exits = self.check_card(user_id=int(card_number[6:15]))
+        id_exits = self.check_card(user_id=int(card_number[6:15]))  # Checking the account id if exits
         luhn_not_checks_out = self.luhn_algorithm(card_number) != int(card_number[-1])
-        if exits and luhn_not_checks_out:
+        same_account = self.active_card['number'] == card_number
+        if id_exits and luhn_not_checks_out:
             print('Probably you made mistake in the card number. Please try again!')
-        elif not exits:
+        elif not id_exits:
             print('Such a card does not exits.')
+        elif same_account:
+            print("You can't transfer money to the same account!")
         else:
             print("Test Spot")
 
