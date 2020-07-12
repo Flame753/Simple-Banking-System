@@ -110,9 +110,11 @@ class Bank:
     def do_transfer(self):
         print('Transfer')
         card_number = str(input("Enter card number: "))
-        id_exits = self.check_card(user_id=int(card_number[6:15]))  # Checking the account id if exits
+        location_of_transfer = int(card_number[6:15])
+        id_exits = self.check_card(user_id=location_of_transfer)  # Checking the account id if exits
         luhn_not_checks_out = self.luhn_algorithm(card_number) != int(card_number[-1])
         same_account = self.active_card['number'] == card_number
+
         if id_exits and luhn_not_checks_out:
             print('Probably you made mistake in the card number. Please try again!')
         elif not id_exits:
@@ -120,7 +122,14 @@ class Bank:
         elif same_account:
             print("You can't transfer money to the same account!")
         else:
-            print("Test Spot")
+            transfer_amount = int(input('Enter how much money you want to transfer: '))
+            if self.active_card['balance'] >= transfer_amount:
+                self.data_base.add_to_balance(self.active_card['id'], -transfer_amount)
+                self.data_base.add_to_balance(location_of_transfer, transfer_amount)
+                self.update_active_card(self.active_card['number'], self.active_card['pin'])
+                print('Success!')
+            else:
+                print('Not enough money!')
 
     def update_active_card(self, card=None, pin=None):
         if card is None or pin is None:
