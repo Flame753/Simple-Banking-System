@@ -38,7 +38,7 @@ class Bank:
         print(pin)
 
     def login(self):
-        card = input('Enter your card number:')
+        card = input('Enter your card number: ')
         pin = input('Enter your PIN:')
         if self.check_card(card, pin):
             self.update_active_card(card, pin)
@@ -51,9 +51,7 @@ class Bank:
         try:
             card_info = self.data_base.retrieve_card_info(user_card, user_pin, user_id)
             number = card_info['number']
-            pin = card_info['pin']
-            id = card_info['id']
-            if pin == user_pin and self.luhn_algorithm(user_card) == int(number[-1]) or user_id == id:
+            if self.luhn_algorithm(user_card) == int(number[-1]):
                 return True
         except TypeError:
             return False
@@ -115,10 +113,10 @@ class Bank:
     def do_transfer(self):
         print('Transfer')
         card_number = str(input("Enter card number: "))
-        print(self.check_card(user_id=card_number[6:15]), card_number[6:15])
+        print(card_number[6::])
         if self.luhn_algorithm(card_number) != int(card_number[-1]):
             print('Probably you made mistake in the card number. Please try again!')
-        elif not self.check_card(user_id=card_number[6:15]):
+        elif not self.check_card(user_id=int(card_number[6::])):  # Not Working
             print('Such a card does not exits.')
         else:
             print("Test Spot")
