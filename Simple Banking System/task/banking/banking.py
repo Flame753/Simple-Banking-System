@@ -40,7 +40,7 @@ class Bank:
     def login(self):
         card = input('Enter your card number: ')
         pin = input('Enter your PIN: ')
-        if self.check_card(card, pin):
+        if self.check_card(card, pin) and self.luhn_check(card):
             self.update_active_card(card, pin)
             print('You have successfully logged in!')
             self.run_logged()
