@@ -39,7 +39,7 @@ class Bank:
 
     def login(self):
         card = input('Enter your card number: ')
-        pin = input('Enter your PIN:')
+        pin = input('Enter your PIN: ')
         if self.check_card(card, pin):
             self.update_active_card(card, pin)
             print('You have successfully logged in!')
@@ -66,7 +66,8 @@ class Bank:
             if action == '1':
                 self.show_balance()
             elif action == '2':
-                self.add_income()
+                amount = int(input('Enter income: '))
+                self.add_income(self.active_card['id'], amount, self.active_card['number'], self.active_card['pin'])
             elif action == '3':
                 self.do_transfer()
             elif action == '4':
@@ -98,38 +99,37 @@ class Bank:
         balance = self.active_card["balance"]
         print(f"Balance: {balance}")
 
-    def add_income(self):
-        amount = int(input('Enter income: '))
-        id = self.active_card['id']
-        card_number = self.active_card['number']
-        pin = self.active_card['pin']
+    def add_income(self, id, amount, card_number=None, pin=None):
         self.data_base.add_to_balance(id, amount)
         self.update_active_card(card_number, pin)
         print('Income was added!')
 
     def do_transfer(self):
-        print('Transfer')
-        card_number = str(input("Enter card number: "))
-        location_of_transfer = int(card_number[6:15])
-        id_exits = self.check_card(user_id=location_of_transfer)  # Checking the account id if exits
-        luhn_not_checks_out = self.luhn_algorithm(card_number) != int(card_number[-1])
-        same_account = self.active_card['number'] == card_number
+        try:
+            print('Transfer')
+            card_number = str(input("Enter card number: "))
+            location_of_transfer = int(card_number[6:15])
+            id_exits = self.check_card(user_id=location_of_transfer)  # Checking the account id if exits
+            luhn_checks_out = self.luhn_check(card_number)
+            same_account = self.active_card['number'] == card_number
 
-        if id_exits and luhn_not_checks_out:
-            print('Probably you made mistake in the card number. Please try again!')
-        elif not id_exits:
-            print('Such a card does not exits.')
-        elif same_account:
-            print("You can't transfer money to the same account!")
-        else:
-            transfer_amount = int(input('Enter how much money you want to transfer: '))
-            if self.active_card['balance'] >= transfer_amount:
-                self.data_base.add_to_balance(self.active_card['id'], -transfer_amount)
-                self.data_base.add_to_balance(location_of_transfer, transfer_amount)
-                self.update_active_card(self.active_card['number'], self.active_card['pin'])
-                print('Success!')
+            if id_exits and not luhn_checks_out:
+                print('Probably you made mistake in the card number. Please try again!')
+            elif not id_exits:
+                print('Such a card does not exits.')
+            elif same_account:
+                print("You can't transfer money to the same account!")
             else:
-                print('Not enough money!')
+                transfer_amount = int(input('Enter how much money you want to transfer: '))
+                if self.active_card['balance'] >= transfer_amount:
+                    self.add_income(self.active_card['id'], -transfer_amount,
+                                    self.active_card['number'], self.active_card['pin'])
+                    self.add_income(location_of_transfer, transfer_amount)
+                    print('Success!')
+                else:
+                    print('Not enough money!')
+        except ValueError:
+            print('Such a card does not exits.')
 
     def update_active_card(self, card=None, pin=None):
         if card is None or pin is None:
@@ -151,6 +151,11 @@ class Bank:
         if check_sum == 10:
             check_sum = 0
         return check_sum
+
+    def luhn_check(self, card_number) -> bool:
+        if self.luhn_algorithm(card_number) == int(card_number[-1]):
+            return True
+        return False
 
 
 class DataBase:
