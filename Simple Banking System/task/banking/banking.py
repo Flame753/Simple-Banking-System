@@ -108,11 +108,10 @@ class Bank:
         try:
             print('Transfer')
             card_number = str(input("Enter card number: "))
-            location_of_transfer = int(card_number[6:15])
+            location_of_transfer = int(card_number[6:15])  # try/except: see if correctly length
             id_exits = self.check_card(user_id=location_of_transfer)  # Checking the account id if exits
             luhn_checks_out = self.luhn_check(card_number)
             same_account = self.active_card['number'] == card_number
-
             if id_exits and not luhn_checks_out:
                 print('Probably you made mistake in the card number. Please try again!')
             elif not id_exits:
@@ -138,8 +137,8 @@ class Bank:
             self.active_card = self.data_base.retrieve_card_info(card, pin)
 
     @staticmethod
-    def luhn_algorithm(card):
-        card_num = [int(x) for x in str(card)]
+    def luhn_algorithm(card_number):
+        card_num = [int(x) for x in str(card_number)]
         card_num.pop()  # Drop the last digit
         for position in range(len(card_num)):
             if (position + 1) % 2 == 1:
@@ -152,8 +151,14 @@ class Bank:
             check_sum = 0
         return check_sum
 
-    def luhn_check(self, card_number) -> bool:
-        if self.luhn_algorithm(card_number) == int(card_number[-1]):
+    @staticmethod
+    def luhn_input_valid(card_num) -> bool:
+        if len(str(card_num)) == 16:
+            return True
+        return False
+
+    def luhn_check(self, card_num) -> bool:
+        if self.luhn_input_valid(card_num) and self.luhn_algorithm(card_num) == int(str(card_num)[-1]):
             return True
         return False
 
@@ -204,3 +209,4 @@ class DataBase:
 if __name__ == "__main__":
     m = Bank('400000')
     m.run()
+
