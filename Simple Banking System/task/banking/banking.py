@@ -115,7 +115,7 @@ class Bank:
             if not luhn_checks_out:
                 print('Probably you made mistake in the card number. Please try again!')
             elif not id_exits:
-                print('Such a card does not exits.')
+                print('Such a card does not exist.')
             elif same_account:
                 print("You can't transfer money to the same account!")
             else:
