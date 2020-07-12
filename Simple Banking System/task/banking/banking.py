@@ -112,7 +112,7 @@ class Bank:
             id_exits = self.check_card(user_id=location_of_transfer)  # Checking the account id if exits
             luhn_checks_out = self.luhn_check(card_number)
             same_account = self.active_card['number'] == card_number
-            if id_exits and not luhn_checks_out:
+            if not luhn_checks_out:
                 print('Probably you made mistake in the card number. Please try again!')
             elif not id_exits:
                 print('Such a card does not exits.')
@@ -209,4 +209,3 @@ class DataBase:
 if __name__ == "__main__":
     m = Bank('400000')
     m.run()
-
