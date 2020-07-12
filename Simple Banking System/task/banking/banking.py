@@ -49,13 +49,10 @@ class Bank:
 
     def check_card(self, user_card=None, user_pin=None, user_id=None) -> bool:
         try:
-            card_info = self.data_base.retrieve_card_info(user_card, user_pin, user_id)
-            number = card_info['number']
-            if self.luhn_algorithm(user_card) == int(number[-1]):
-                return True
+            self.data_base.retrieve_card_info(user_card, user_pin, user_id)
+            return True
         except TypeError:
             return False
-        return False
 
     def run_logged(self):
         while True:
@@ -113,10 +110,11 @@ class Bank:
     def do_transfer(self):
         print('Transfer')
         card_number = str(input("Enter card number: "))
-        print(card_number[6::])
-        if self.luhn_algorithm(card_number) != int(card_number[-1]):
+        exits = self.check_card(user_id=int(card_number[6:15]))
+        luhn_not_checks_out = self.luhn_algorithm(card_number) != int(card_number[-1])
+        if exits and luhn_not_checks_out:
             print('Probably you made mistake in the card number. Please try again!')
-        elif not self.check_card(user_id=int(card_number[6::])):  # Not Working
+        elif not exits:
             print('Such a card does not exits.')
         else:
             print("Test Spot")
